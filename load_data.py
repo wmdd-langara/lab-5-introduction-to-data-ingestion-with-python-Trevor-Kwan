@@ -21,15 +21,12 @@ def process_py():
 
 def process_csv():
   f = open('prices.csv', 'r')
-
-    # We supply the file object into a reader to parse the csv file
   reader = csv.DictReader(f)
 
     # initialize some accumulator variables
   total = 0
   count = 0
 
-    # The main loop
   for record in reader:
         # each item in reader is a row in the csv file converted to a python dictionary
       delta = record['PRODUCT_PRICE']
@@ -40,6 +37,7 @@ def process_csv():
   f.close()
   return total/count
   
+
 
 def process_pandas():
   df = pandas.read_csv('prices.csv')
@@ -59,3 +57,27 @@ if __name__ == "__main__":
     print(process_csv())
     print("Average price using pandas module: ", end='')    
     print(process_pandas())
+
+
+
+def process_csv_dict():
+  f = open('prices.csv', 'r')
+  reader = csv.DictReader(f)
+
+    # initialize some accumulator variables
+  total = 0
+  count = 0
+  list = []
+
+  for record in reader:
+      #if not in list then add it to the list
+      if record['ITEM_CATEGORY_NAME'] not in list:
+         list.append(record['ITEM_CATEGORY_NAME'])
+
+        
+  f.close()
+  return list
+
+print(process_csv_dict())
+
+
