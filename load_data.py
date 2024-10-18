@@ -85,11 +85,17 @@ def process_csv_dict():
      for i in range (len(keys)):
        if keys[i] == str(category):
         values[i] += float(price)
-        count[i] += float(1)
+        count[i] += float(1.0)
   
+  #avg cost from total divided by count 
   for i in range (len(values)):
-    avg_cost.append(values[i]/count[i])
+    if count[i] != 0:
+
+      avg_cost.append(values[i]/count[i])
+    
+
         
+  #combine together to form a dictionary 
   res = {keys[i]: avg_cost[i] for i in range (len(keys))}
   f.close()
   return res
@@ -97,3 +103,17 @@ def process_csv_dict():
 print(process_csv_dict())
 
 
+
+
+def process_pandas_groupby():
+  
+  datas = process_csv_dict()
+  d = {'ITEM_CATEGORY_NAME': datas.keys(), 'PRODUCT_PRICE': datas.values()}
+  df = pandas.DataFrame(data = d)
+  df
+
+  df.groupby(['ITEM_CATEGORY_NAME'])
+  return df
+
+
+print(process_pandas_groupby())
