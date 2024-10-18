@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import pandas
 import csv
+import json
+
 
 def process_py():
   f = open('prices.csv', 'r')
@@ -23,7 +25,7 @@ def process_csv():
   f = open('prices.csv', 'r')
   reader = csv.DictReader(f)
 
-    # initialize some accumulator variables
+  # initialize some accumulator variables
   total = 0
   count = 0
 
@@ -33,7 +35,6 @@ def process_csv():
       total += float(delta)
       count += 1
 
-    # remember to close the file object
   f.close()
   return total/count
   
@@ -41,11 +42,8 @@ def process_csv():
 
 def process_pandas():
   df = pandas.read_csv('prices.csv')
-
-
     # We can also perform calculcations on a single column
   delta = df['PRODUCT_PRICE'].mean()
-
     # We are returning the timedelta
   return delta
   
@@ -64,19 +62,37 @@ def process_csv_dict():
   f = open('prices.csv', 'r')
   reader = csv.DictReader(f)
 
-    # initialize some accumulator variables
-  total = 0
-  count = 0
-  list = []
+  keys = []
+  values = []
+  count = []
+  avg_cost = []
 
+  #if not in dictionary then initiate key and value = 0 for it and a count(er)
   for record in reader:
-      #if not in list then add it to the list
-      if record['ITEM_CATEGORY_NAME'] not in list:
-         list.append(record['ITEM_CATEGORY_NAME'])
+    if record['ITEM_CATEGORY_NAME'] not in keys:
+       keys.append(record['ITEM_CATEGORY_NAME'])
+       values.append(float(0))
+       count.append(float(0))
 
+  #go back to the start of the csv file; first row 
+  f.seek(0)
+
+  #add up all the prices 
+  for record in reader:
+     price = record['PRODUCT_PRICE']
+     category = record['ITEM_CATEGORY_NAME']
+
+     for i in range (len(keys)):
+       if keys[i] == str(category):
+        values[i] += float(price)
+        count[i] += float(1)
+  
+  for i in range (len(values)):
+    avg_cost.append(values[i]/count[i])
         
+  res = {keys[i]: avg_cost[i] for i in range (len(keys))}
   f.close()
-  return list
+  return res
 
 print(process_csv_dict())
 
