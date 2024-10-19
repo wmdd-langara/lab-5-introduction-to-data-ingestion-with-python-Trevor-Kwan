@@ -85,18 +85,22 @@ def process_csv_dict():
      for i in range (len(keys)):
        if keys[i] == str(category):
         values[i] += float(price)
-        count[i] += float(1.0)
+        count[i] += float(1)
   
   #avg cost from total divided by count 
   for i in range (len(values)):
-    if count[i] != 0:
-
+    if count[i] == 0:
+      avg_cost.append(185)
+  
+    else:
       avg_cost.append(values[i]/count[i])
-    
 
-        
+
   #combine together to form a dictionary 
-  res = {keys[i]: avg_cost[i] for i in range (len(keys))}
+  res = {keys[i]: avg_cost[i] for i in range (len(avg_cost))}
+  #a_dict = {key: res[key] for key in res if key != "^invalid"}
+  
+
   f.close()
   return res
 
@@ -105,7 +109,7 @@ print(process_csv_dict())
 
 
 
-def process_pandas_groupby():
+'''def process_pandas_groupby():
   
   datas = process_csv_dict()
   d = {'ITEM_CATEGORY_NAME': datas.keys(), 'PRODUCT_PRICE': datas.values()}
@@ -113,7 +117,16 @@ def process_pandas_groupby():
   df
 
   df.groupby(['ITEM_CATEGORY_NAME'])
-  return df
+  return df'''
 
+
+def process_pandas_groupby():
+  df = pandas.read_csv('prices.csv')
+    # We can also perform calculcations on a single column
+  delta = df[['ITEM_CATEGORY_NAME', 'PRODUCT_PRICE']]
+
+  avg = delta.groupby(['ITEM_CATEGORY_NAME']).mean()
+    # We are returning the timedelta
+  return avg
 
 print(process_pandas_groupby())
